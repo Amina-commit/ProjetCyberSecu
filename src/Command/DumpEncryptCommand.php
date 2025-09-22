@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:dump-encrypt',
-    description: 'Add a short description for your command',
+    description: 'Sauvegarde et chiffre un fichier spécifié.',
 )]
 class DumpEncryptCommand extends Command
 {
@@ -24,26 +24,37 @@ class DumpEncryptCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
-        ;
+            ->addArgument('input', InputArgument::REQUIRED, '')
+            ->addArgument('output', InputArgument::REQUIRED, '')
+            ->addOption('key', null, InputOption::VALUE_REQUIRED, 'AES-206', 'AES-206');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
+        $inputFile = $input->getArgument('input');
+        $outputFile = $input->getArgument('output');
+        $key = $input->getOption('key');
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        if (!file_exists($inputFile)) {
+            $io->error('Le fichier d\'entrée n\'existe pas.');
+            return Command::FAILURE;
         }
 
-        if ($input->getOption('option1')) {
-            // ...
-        }
+        // Lire le contenu du fichier
+        $data = file_get_contents($inputFile);
 
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        // Chiffrement
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+        $encryptedData = openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
+
+        // Stocker le vecteur d'initialisation avec les données chiffrées
+        file_put_contents($outputFile, base64_encode($iv . $encryptedData));
+
+        $io->success('Fichier chiffré avec succès : ' . $outputFile);
 
         return Command::SUCCESS;
     }
 }
+
+

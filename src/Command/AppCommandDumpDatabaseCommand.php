@@ -35,9 +35,9 @@ class DumpDatabaseCommand extends Command
 
         $command = sprintf(
             'mysqldump -u %s -p%s %s > %s',
-            $params['user'],
-            $params['password'],
-            $params['bdcyber'],
+            $params['login5732'],
+            $params['dTNIOmZjveqabQG'],
+            $params['bdmamie'],
             $outputFile
         );
 
