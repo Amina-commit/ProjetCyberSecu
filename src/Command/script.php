@@ -20,9 +20,9 @@ $tempEncryptedFilePath = 'src/backup.txt';
 file_put_contents($tempEncryptedFilePath, $encryptedContent);
 
 // Informations de connexion au serveur distant
-$sftpHost = 'localHost';
-$sftpUsername = 'login5729';
-$sftpPassword = 'WnpwrywDkOlxiez';
+$sftpHost = '10.23.216.133';
+$sftpUsername = 'user1';
+$sftpPassword = 'btsinfos';
 $remoteFilePath = '/backup.txt';
 
 // Connexion SFTP
